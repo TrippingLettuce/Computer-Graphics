@@ -1,6 +1,3 @@
-
-
-
 // This program is a modification and extension of an early program in Edward
 // Angel's book, Interactive Computer Graphics: A top-down approach using
 // OpenGL.  It plots the 3-D Sierpinski Tetrahedron using colors in a nice
