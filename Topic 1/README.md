@@ -9,7 +9,7 @@
 ---
 #### C++ compiling code for OpenGL
 ```
-$ g++ [filename.cpp] -o [ExecFileName] -lglut -lGLU -lGL <br>
+$ g++ [filename.cpp] -o [ExecFileName] -lglut -lGLU -lGL
 ```
 ---
 ### Files
