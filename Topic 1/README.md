@@ -6,3 +6,11 @@
 3. Describe the relationship between Direct3X and OpenGL. <br>
 4. Become familiar with the OpenGL Programming Interface. <br>
 5. Create simple graphics using OpenGL and C++.
+---
+#### C++ compiling code for OpenGL
+```
+$ g++ [filename.cpp] -o [ExecFileName] -lglut -lGLU -lGL <br>
+```
+---
+### Files
+myFirstOpenGL.exe: Execution file from compiled code test.cpp 
