@@ -40,6 +40,13 @@ void display() {
 // Draws the "next 500 points".  The function contains locally the definitions
 // of the vertices and the current point as static objects so that their values
 // are retained between calls.
+
+  // Here is the code to draw the "next 500 points".  The closer the point is
+  // to the camera, the brighter we make it.  The coloring technique is a
+  // quick hack which (unprofessionally) depends on the fact that the range
+  // of z-coordinates in the tetrahedron run from -200 to -700.  By adding
+  // 700 to any z-value and then dividing by 500, we get values in the range
+  // 0 to 1 - just perfect for coloring.
 void generateMorePoints() {
 
   // The tetrahedron has four vertices.  We also have to keep track of the
@@ -52,12 +59,7 @@ void generateMorePoints() {
   };
   static Point lastPoint = vertices[0];
 
-  // Here is the code to draw the "next 500 points".  The closer the point is
-  // to the camera, the brighter we make it.  The coloring technique is a
-  // quick hack which (unprofessionally) depends on the fact that the range
-  // of z-coordinates in the tetrahedron run from -200 to -700.  By adding
-  // 700 to any z-value and then dividing by 500, we get values in the range
-  // 0 to 1 - just perfect for coloring.
+
   glBegin(GL_POINTS);
   for (int i = 0; i <= 500; i++) {
     lastPoint = lastPoint.midpoint(vertices[rand() % 4]);
