@@ -8,8 +8,7 @@ Navigate to the directory containing your source code :
 cd home/path
 
 Compile the source code using the provided command:
-g++ name.cpp -o newName -lglut -lGLU -lGL
+g++ [name.cpp] -o [newName] -lglut -lGLU -lGL
 
 After successful compilation, you can run the program with:
-./newName
-
+./[newName]
