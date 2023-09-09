@@ -2,7 +2,6 @@
 // Angel's book, Interactive Computer Graphics: A top-down approach using
 // OpenGL.  It plots the 3-D Sierpinski Tetrahedron using colors in a nice
 // way.
-
 #ifdef __APPLE_CC__
 #include <GLUT/glut.h>
 #else

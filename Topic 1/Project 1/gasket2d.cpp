@@ -1,6 +1,4 @@
-
 // This program generates a Sierpinski gasket with 10000 points.
-
 #ifdef __APPLE_CC__
 #include <GLUT/glut.h>
 #else
