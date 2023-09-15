@@ -19,6 +19,9 @@ cd home/path
 Compile the source code using the provided command:
 ```
 g++ [name.cpp] -o [newName] -lglut -lGLU -lGL
+ex:
+g++ main.cpp -o firstOpenGlApp -lglut -lGLU -lGL
+
 ```
 After successful compilation, you can run the program with:
 ```
