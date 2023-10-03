@@ -13,7 +13,7 @@
 
 // Function prototypes
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
-
+x
 // Window dimensions
 const GLuint WIDTH = 800, HEIGHT = 600;
 
