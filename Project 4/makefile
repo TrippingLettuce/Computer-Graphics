@@ -2,7 +2,7 @@
 
 # Variables
 CXX = g++
-CXXFLAGS = -lglut -lGLU -lGL
+CXXFLAGS = -lglut -lGLU -lGL -lSOIL
 TARGET = scene
 SRC = scene.cpp
 

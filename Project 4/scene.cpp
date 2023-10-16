@@ -1,10 +1,16 @@
 // Below is the code for Project 4. This code utilizes basic openGL commands to make a 2D portrait of the picture that was chosen from Project 3. This utilized
 // polygons, lines, and colors from the picture to render with our graphics. This will potentially be expanded to 3D in the future.
-#include <iostream>
 #include <GL/glut.h>
 #include <stdlib.h>
 #include <math.h>
 #include <SOIL/SOIL.h>
+#include <filesystem>
+#include <limits.h>
+#include <unistd.h>
+#include <iostream>
+
+// for texture
+#include "texture.cpp"
 
 void start(){
     glClearColor(187.0f/255.0f, 179.0f/255.0f, 165.0f/255.0f, 255.0);
@@ -14,19 +20,6 @@ void start(){
 }
 // ----------------------------------------------------------- //
 #define NUM_SEGMENTS 100
-
-// Shape Definition //
-// void drawEllipse(float radiusX, float radiusY, float x, float y) {
-//     glBegin(GL_LINE_LOOP);
-//     for(int i = 0; i < NUM_SEGMENTS; i++) {
-//         float theta = 2.0f * M_PI * (float)i / (float)NUM_SEGMENTS;
-//         float dx = radiusX * cosf(theta);
-//         float dy = radiusY * sinf(theta);
-//         glVertex2f(x + dx, y + dy);
-//     }
-//     glEnd();
-// }
-
 
 void drawEllipse(float radiusX, float radiusY, float x, float y, float rotation, float r, float g, float b) {
     // Save the current transformation matrix
@@ -55,22 +48,47 @@ void drawEllipse(float radiusX, float radiusY, float x, float y, float rotation,
     glPopMatrix();
 }
 
+covers cover;              //initializing the class being call
 // ----------------------------------------------------------- //
 // Object Declaration
-void dryer() {
+void scene() {
     
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // This line calls our class to initialize our textures
+    
+    //INPUT YOUR SPECIFIC FILE PATH HERE
+    //Path_max Maximum number of bytes in a pathname, including the terminating null character.
+    char buffer[PATH_MAX]; //creating a character array called buffer
+    ssize_t len = readlink("/proc/self/exe", buffer, sizeof(buffer) - 1); // this is getting the current code that is running. Creating a buffer
+    if (len != -1) { // if there is a value that comes into the nuffer(path) then we will ahve a path.
+        buffer[len-6] = '\0'; // cutting the end of the array to not get null values
+        std:: cout << buffer << std::endl;
+    } 
+    else {
+        std::cerr << "Error: Unable to retrieve executable path." << std::endl;
+    }
+    std:: string filepath(buffer);
+
+    GLuint texture, texture1, texture2, texture3, texture4;
+    texture = cover.init(filepath + "/texture/wooden_texture.jpg");
+    texture1 = cover.init(filepath +  "/texture/carpet.jpg");
+    texture2 = cover.init(filepath + "/texture/tv_screen.png");
+    texture3 = cover.init(filepath + "/texture/123.png");
+    texture4 = cover.init(filepath + "/texture/nintendo.png");
 
 // ----------------------------------------------------------- //
     // Window Frame
+    glEnable(GL_TEXTURE_2D); // Enable texturing
+    glBindTexture(GL_TEXTURE_2D, texture3); // Bind your texture
     glBegin(GL_POLYGON);
     glColor4b(255 * 127 / 255,255 * 127 / 255,255 * 127 / 255,255);
-    glVertex2i(0, 463 - 151);
-    glVertex2i(217, 463 - 151);
-    glVertex2i(217, 463 - 0);
-    glVertex2i(0, 463 - 0);
+    glTexCoord2f(0.0f, 0.0f); glVertex2i(0, 463 - 151);
+    glTexCoord2f(1.0f, 0.0f); glVertex2i(217, 463 - 151);
+    glTexCoord2f(1.0f, 1.0f); glVertex2i(217, 463 - 0);
+    glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 463 - 0);
     glEnd();
-
+    glDisable(GL_TEXTURE_2D);
 
     // ----------------------------------------------------------- //
     // Brick Wall
@@ -221,17 +239,6 @@ void dryer() {
     glVertex2i(217, 463 - 118);
     glEnd();
 
-
-
-    // Window Middle Frame
-    glBegin(GL_POLYGON);
-    glColor4b(95 * 127 / 255,106 * 127 / 255,129 * 127 / 255,255);
-    glVertex2i(77, 463 - 0);
-    glVertex2i(92, 463 - 0);
-    glVertex2i(99, 463 - 118);
-    glVertex2i(84, 463 - 118);
-    glEnd();
-
     // Window Bottom Frame
     glBegin(GL_POLYGON);
     glColor4b(179 * 127 / 255,177 * 127 / 255,176 * 127 / 255,255);
@@ -260,29 +267,29 @@ void dryer() {
 
     glLineWidth(6.0f);
     // Window Blind Lines (Left -> Right order)
-    glBegin(GL_LINES);
-    glColor4b(145 * 127 / 255,133 * 127 / 255,138 * 127 / 255,255);
-    glVertex2i(5, 463 - 0);
-    glVertex2i(21, 463 - 151);
-    glEnd();
+    // glBegin(GL_LINES);
+    // glColor4b(145 * 127 / 255,133 * 127 / 255,138 * 127 / 255,255);
+    // glVertex2i(5, 463 - 0);
+    // glVertex2i(21, 463 - 151);
+    // glEnd();
 
-    glBegin(GL_LINES);
-    glColor4b(145 * 127 / 255,133 * 127 / 255,138 * 127 / 255,255);
-    glVertex2i(29, 463 - 0);
-    glVertex2i(42, 463 - 151);
-    glEnd();
+    // glBegin(GL_LINES);
+    // glColor4b(145 * 127 / 255,133 * 127 / 255,138 * 127 / 255,255);
+    // glVertex2i(29, 463 - 0);
+    // glVertex2i(42, 463 - 151);
+    // glEnd();
 
-    glBegin(GL_LINES);
-    glColor4b(145 * 127 / 255,133 * 127 / 255,138 * 127 / 255,255);
-    glVertex2i(52, 463 - 0);
-    glVertex2i(67, 463 - 151);
-    glEnd();
+    // glBegin(GL_LINES);
+    // glColor4b(145 * 127 / 255,133 * 127 / 255,138 * 127 / 255,255);
+    // glVertex2i(52, 463 - 0);
+    // glVertex2i(67, 463 - 151);
+    // glEnd();
 
-    glBegin(GL_LINES);
-    glColor4b(145 * 127 / 255,133 * 127 / 255,138 * 127 / 255,255);
-    glVertex2i(95, 463 - 0);
-    glVertex2i(106, 463 - 151);
-    glEnd();
+    // glBegin(GL_LINES);
+    // glColor4b(145 * 127 / 255,133 * 127 / 255,138 * 127 / 255,255);
+    // glVertex2i(95, 463 - 0);
+    // glVertex2i(106, 463 - 151);
+    // glEnd();
 
     glBegin(GL_LINES);
     glColor4b(145 * 127 / 255,133 * 127 / 255,138 * 127 / 255,255);
@@ -375,58 +382,88 @@ void dryer() {
     glVertex2i(225, 463 - 64);
     glEnd();
 
+    glDisable(GL_TEXTURE_2D);
+
 // ----------------------------------------------------------- //
     // Floor 
+    glEnable(GL_TEXTURE_2D); // Enable texturing
+    glBindTexture(GL_TEXTURE_2D, texture1); // Bind your texture
+    // glDisable(GL_LIGHTING);
+    // Set color to white
+    glColor3f(0.4647f, 0.4647f, 0.4569f);
+
     glBegin(GL_POLYGON);
-    glColor4b(41 * 127 / 255, 41 * 127 / 255, 39 * 127 / 255,255);
-    glVertex2i(0, 463 - 463);
-    glVertex2i(0, 463 - 424);
-    glVertex2i(246, 463 - 341);
-    glVertex2i(377, 463 - 420);
-    glVertex2i(377, 463 - 463);
+    glTexCoord2f(0.0f, 0.0f); glVertex2i(0, 463 - 463);
+    glTexCoord2f(1.0f, 0.0f); glVertex2i(377, 463 - 463);
+    glTexCoord2f(1.0f, 1.0f); glVertex2i(377, 463 - 420);
+    glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 463 - 424);
+
+
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+
+
+    glEnable(GL_TEXTURE_2D); // Enable texturing
+    glBindTexture(GL_TEXTURE_2D, texture1); // Bind your texture
+    glColor3f(0.4647f, 0.4647f, 0.4569f);
+    
+    glBegin(GL_POLYGON);
+    glTexCoord2f(1.0f, 0.0f); glVertex2i(0, 463 - 424);
+    glTexCoord2f(0.0f, 0.0f); glVertex2i(246, 463 - 341);
+    glTexCoord2f(0.0f, 1.0f); glVertex2i(377, 463 - 420);
     glEnd();
 
+    glDisable(GL_TEXTURE_2D);
 
 
 // ----------------------------------------------------------- //
 // Table
-    // Table RGB values
-    int t_r = 162 * 127 / 255;
-    int t_g = 128 * 127 / 255;
-    int t_b = 91 * 127 / 255;
+    glEnable(GL_TEXTURE_2D); // Enable texturing
+    glBindTexture(GL_TEXTURE_2D, texture); // Bind your texture
+
+    glDisable(GL_LIGHTING);
+    // Set color to white
+    glColor3f(0.8667f, 0.7373f, 0.5647f);
+
     // Table Upper Surface
     glBegin(GL_POLYGON);
-    glColor4b(t_r,t_g,t_b,255);
-    glVertex2i(112, 463 - 303);
-    glVertex2i(312, 463 - 287);
-    glVertex2i(350,463 - 337);
-    glVertex2i(94,463 - 337);
+    glTexCoord2f(0.0f, 0.0f); glVertex2i(112, 463 - 303);
+    glTexCoord2f(1.0f, 0.0f); glVertex2i(312, 463 - 287);
+    glTexCoord2f(1.0f, 1.0f); glVertex2i(350, 463 - 337);
+    glTexCoord2f(0.0f, 1.0f); glVertex2i(94, 463 - 337);
     glEnd();
 
+    // Second polygon
     glBegin(GL_POLYGON);
-    glColor4b(177 * 127/255, 144 * 127/255, 99 * 127/255,255);
-    glVertex2i(94, 463 - 337);
-    glVertex2i(350,463 - 337);
-    glVertex2i(350,463 - 346);
-    glVertex2i(94,463 - 346);
+    glTexCoord2f(0.0f, 0.0f); glVertex2i(94, 463 - 337);
+    glTexCoord2f(1.0f, 0.0f); glVertex2i(350, 463 - 337);
+    glTexCoord2f(1.0f, 1.0f); glVertex2i(350, 463 - 346);
+    glTexCoord2f(0.0f, 1.0f); glVertex2i(94, 463 - 346);
     glEnd();
+    glDisable(GL_TEXTURE_2D);
 
+    glEnable(GL_TEXTURE_2D); // Enable texturing
+    glBindTexture(GL_TEXTURE_2D, texture); // Bind your texture
+
+    glDisable(GL_LIGHTING);
+    // Set color to white
+    glColor3f(0.8667f, 0.7373f, 0.5647f);
     // Table Lower Surface
     glBegin(GL_POLYGON);
-    glColor4b(t_r,t_g,t_b,255);
-    glVertex2i(124, 463 - 358);
-    glVertex2i(105, 463 - 411);
-    glVertex2i(336,463 - 417);
-    glVertex2i(309,463 - 361);
+    glTexCoord2f(0.0f, 2.0f); glVertex2i(124, 463 - 358);
+    glTexCoord2f(0.0f, 0.0f); glVertex2i(105, 463 - 411);
+    glTexCoord2f(1.0f, 1.0f); glVertex2i(336, 463 - 417);
+    glTexCoord2f(0.0f, 1.0f); glVertex2i(309, 463 - 361);
     glEnd();
 
     glBegin(GL_POLYGON);
-    glColor4b(177 * 127/255, 144 * 127/255, 99 * 127/255,255);
-    glVertex2i(105, 463 - 411);
-    glVertex2i(105,463 - 416);
-    glVertex2i(336,463 - 421);
-    glVertex2i(336,463 - 416);
+    glTexCoord2f(0.0f, 0.0f); glVertex2i(105, 463 - 411);
+    glTexCoord2f(1.0f, 0.0f); glVertex2i(105, 463 - 416);
+    glTexCoord2f(1.0f, 1.0f); glVertex2i(336, 463 - 421);
+    glTexCoord2f(0.0f, 1.0f); glVertex2i(336, 463 - 416);
     glEnd();
+
+    glDisable(GL_TEXTURE_2D);
 
     // Table Legs
         // Left Outer Leg
@@ -467,11 +504,112 @@ void dryer() {
 
 
 // ----------------------------------------------------------- //
+
+    glLineWidth(1.5f);
+    //Cables
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 0.0f); // Black color for the cable
+    glVertex2i(280, 80); // Starting point of the cable (controller 1)
+    glVertex2i(310, 60); // Ending point of the cable (controller 2)
+    glEnd();
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 0.0f); // Black color for the cable
+    glVertex2i(280, 80); // Starting point of the cable (controller 1)
+    glVertex2i(260, 90); // Ending point of the cable (controller 2)
+    glEnd();
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 0.0f); // Black color for the cable
+    glVertex2i(260, 90); // Starting point of the cable (controller 1)
+    glVertex2i(245, 105); // Ending point of the cable (controller 2)
+    glEnd();
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 0.0f); // Black color for the cable
+    glVertex2i(280, 80); // Starting point of the cable (controller 1)
+    glVertex2i(275, 105); // Ending point of the cable (controller 2)
+    glEnd();
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 0.0f); // Black color for the cable
+    glVertex2i(280, 80); // Starting point of the cable (controller 1)
+    glVertex2i(230, 55); // Ending point of the cable (controller 2)
+    glEnd();
+
+    glBegin(GL_LINE_STRIP);
+    glColor3f(0.0f, 0.0f, 0.0f); // Black color for the cable
+    float x1 = 280, y1 = 80;      // Starting point of the cable
+    float x2 = 260, y2 = 60;      // Control point of the cable
+    float x3 = 290, y3 = 60;      // Ending point of the cable
+
+    for (float t = 0; t <= 1; t += 0.01) {
+        float x = pow(1 - t, 2) * x1 + 2 * (1 - t) * t * x2 + pow(t, 2) * x3;
+        float y = pow(1 - t, 2) * y1 + 2 * (1 - t) * t * y2 + pow(t, 2) * y3;
+        glVertex2f(x, y);
+    }
+    glEnd();
+
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 0.0f); // Black color for the cable
+    glVertex2i(280, 80); // Starting point of the cable (controller 1)
+    glVertex2i(310, 60); // Ending point of the cable (controller 2)
+    glEnd();
+
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 0.0f); // Black color for the cable
+    glVertex2i(200, 80); // Starting point of the cable (controller 1)
+    glVertex2i(240, 60); // Ending point of the cable (controller 2)
+    glEnd();
+
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 0.0f); // Black color for the cable
+    glVertex2i(200, 80); // Starting point of the cable (controller 1)
+    glVertex2i(180, 80); // Ending point of the cable (controller 2)
+    glEnd();
+
+
+    glBegin(GL_LINE_STRIP);
+    glColor3f(0.0f, 0.0f, 0.0f); // Black color for the cable
+
+    float x1_loop = 180, y1_loop = 80;      // Starting point of the cable
+    float x2_loop = 190, y2_loop = 100;     // Control point of the cable
+    float x3_loop = 200, y3_loop = 80;      // Ending point of the cable
+
+    for (float t = 0; t <= 1; t += 0.01) {
+        float x = pow(1 - t, 2) * x1_loop + 2 * (1 - t) * t * x2_loop + pow(t, 2) * x3_loop;
+        float y = pow(1 - t, 2) * y1_loop + 2 * (1 - t) * t * y2_loop + pow(t, 2) * y3_loop;
+        glVertex2f(x, y);
+    }
+
+    glEnd();
+
+
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 0.0f); // Black color for the cable
+    glVertex2i(207, 50); // Starting point of the cable (controller 1)
+    glVertex2i(215, 80); // Ending point of the cable (controller 2)
+    glEnd();
+
+    // Loop cable using Bezier curve
+    glBegin(GL_LINE_STRIP);
+    glColor3f(0.0f, 0.0f, 0.0f); // Black color for the cable
+
+    float x1_loop1 = 200, y1_loop1 = 80;      // Starting point of the cable
+    float x2_loop1 = 215, y2_loop1 = 40;      // Control point of the cable (above starting point)
+    float x3_loop1 = 220, y3_loop1 = 80;      // Ending point of the cable (same as starting point)
+
+    for (float t = 0; t <= 1; t += 0.01) {
+        float x = pow(1 - t, 2) * x1_loop1 + 2 * (1 - t) * t * x2_loop1 + pow(t, 2) * x3_loop1;
+        float y = pow(1 - t, 2) * y1_loop1 + 2 * (1 - t) * t * y2_loop1 + pow(t, 2) * y3_loop1;
+        glVertex2f(x, y);
+    }
+
+    glEnd();
+
+
 // Nintendo Switch
     // Main Box
     // Joysticks with the box
     glBegin(GL_POLYGON);
-    glColor4b(40 * 127/255, 29 * 127/255, 22 * 127/255,255);
+    // glColor4b(40 * 127/255, 29 * 127/255, 22 * 127/255,255);
+    glColor3f(1.0f,1.0f,1.0f);
     glVertex2i(213, 463 - 386);
     glVertex2i(262,463 - 388);
     glVertex2i(262,463 - 411);
@@ -481,18 +619,24 @@ void dryer() {
     glBegin(GL_POLYGON);
     glColor4b(34 * 127/255, 33 * 127/255, 33 * 127/255,255);
     glVertex2i(213, 463 - 380);
-    glVertex2i(262,463 - 381);
-    glVertex2i(262,463 - 411);
+    glVertex2i(262, 463 - 381);
+    glVertex2i(262, 463 - 411);
     glVertex2i(212, 463 - 411);
     glEnd();
 
+
+    glEnable(GL_TEXTURE_2D); // Enable texturing
+    glBindTexture(GL_TEXTURE_2D, texture4); // Bind your texture
+    glColor3f(1.0f,1.0f,1.0f);
+
     glBegin(GL_POLYGON);
-    glColor4b(15 * 127/255, 15 * 127/255, 15 * 127/255,255);
-    glVertex2i(213, 463 - 386);
-    glVertex2i(262,463 - 388);
-    glVertex2i(262,463 - 411);
-    glVertex2i(212, 463 - 411);
+    // glColor4b(15 * 127/255, 15 * 127/255, 15 * 127/255,255);
+    glTexCoord2f(0.0f, 0.0f); glVertex2i(213, 463 - 386);
+    glTexCoord2f(1.0f, 0.0f); glVertex2i(262,463 - 388);
+    glTexCoord2f(1.0f, 1.0f); glVertex2i(262,463 - 411);
+    glTexCoord2f(0.0f, 1.0f); glVertex2i(212, 463 - 411);
     glEnd();
+    glDisable(GL_TEXTURE_2D);
 
     drawEllipse(5, 10, 140.0f, 463.0f - 395.0f, 59.0f, 0.0f, 0.0f, 0.0f);
 
@@ -565,8 +709,6 @@ void dryer() {
     glVertex2i(197,463 - 388);
     glVertex2i(192, 463 - 392);
     glEnd();
-
-
 
 // ----------------------------------------------------------- //
 // Switch Controller & Box
@@ -681,13 +823,6 @@ void dryer() {
     drawEllipse(1.5, 1.5, 313.0f, 463.0f - 390.0f, 0.0f, 0.0f, 0.0f, 0.0f);
     drawEllipse(1.5, 1.5, 313.0f, 463.0f - 394.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 
-
-    // glBegin(GL_LINES);
-    // glColor3f(1.0f, 0.0f, 0.0f); // Black color for the cable
-    // glVertex2i(300, 463 - 397); // Starting point of the cable (controller 1)
-    // glVertex2i(298, 463 - 397 - 3); // Ending point of the cable (controller 2)
-    // glEnd();
-
 // ----------------------------------------------------------- //
 // TV
 
@@ -701,13 +836,33 @@ void dryer() {
     glEnd();
 
     // TV Inner Screen for reflection and stuff
+
+    glEnable(GL_TEXTURE_2D); // Enable texturing
+    glBindTexture(GL_TEXTURE_2D, texture2); // Bind your texture
+    // glDisable(GL_LIGHTING);
+    // Set color to white
+    // glColor3f(0.6667f, 0.5373f, 0.3647f);
+    glColor3f(1.0f, 1.0f, 1.0f);
+
     glBegin(GL_POLYGON);
-    glColor4b(29.0f,29.0f,34.0f,255);
-    glVertex2i(363, 463 - 121);
-    glVertex2i(50,463 - 120);
-    glVertex2i(66,463 - 301);
-    glVertex2i(346, 463 - 280);
+    // glColor4b(29.0f,29.0f,34.0f,255);
+    // glTexCoord2f(0.0f, 0.0f); glVertex2i(50, 463 - 120);   // Bottom-left
+    // glTexCoord2f(1.0f, 0.0f); glVertex2i(66, 463 - 301);   // Bottom-right
+    // glTexCoord2f(1.0f, 1.0f); glVertex2i(346, 463 - 280);  // Top-left
+    // glTexCoord2f(0.0f, 1.0f); glVertex2i(363, 463 - 121);  // Top-right
+
+    glTexCoord2f(0.0f, 0.0f); glVertex2i(66, 463 - 301);   // Bottom-right
+    glTexCoord2f(1.0f, 0.0f); glVertex2i(346, 463 - 280);  // Top-left
+    glTexCoord2f(1.0f, 1.0f); glVertex2i(363, 463 - 121);  // Top-right
+    glTexCoord2f(0.0f, 1.0f); glVertex2i(50, 463 - 120);   // Bottom-left
+
+
+
+
+
     glEnd();
+    glDisable(GL_TEXTURE_2D);
+
 
     // TV stands leg
     glBegin(GL_POLYGON); 
@@ -722,7 +877,13 @@ void dryer() {
 // ----------------------------------------------------------- //
     glFlush();
     glutSwapBuffers();
+
 }
+
+void display(){
+    scene();
+}
+
 
 int main(int argc, char ** argv) {
     // Initialize GLUT
@@ -734,11 +895,11 @@ int main(int argc, char ** argv) {
     // Set display window width and height
     glutInitWindowSize(377, 463);
     // Create display window with the given title
-    glutCreateWindow("Scene1");
+    glutCreateWindow("Caleb's Room");
     // Execute initialization procedure
     start();
     // Send graphics to display window
-    glutDisplayFunc(dryer);
+    glutDisplayFunc(display);
     // Display everything and wait.
     glutMainLoop();
 
