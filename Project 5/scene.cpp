@@ -1,10 +1,16 @@
 // Below is the code for Project 4. This code utilizes basic openGL commands to make a 2D portrait of the picture that was chosen from Project 3. This utilized
 // polygons, lines, and colors from the picture to render with our graphics. This will potentially be expanded to 3D in the future.
-#include <iostream>
 #include <GL/glut.h>
 #include <stdlib.h>
 #include <math.h>
 #include <SOIL/SOIL.h>
+#include <filesystem>
+#include <limits.h>
+#include <unistd.h>
+#include <iostream>
+
+// for texture
+#include "texture.cpp"
 
 void start(){
     glClearColor(187.0f/255.0f, 179.0f/255.0f, 165.0f/255.0f, 255.0);
@@ -42,79 +48,34 @@ void drawEllipse(float radiusX, float radiusY, float x, float y, float rotation,
     glPopMatrix();
 }
 
+covers cover;              //initializing the class being call
 // ----------------------------------------------------------- //
 // Object Declaration
 void scene() {
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    GLuint texture;
-    texture = SOIL_load_OGL_texture // load an image file directly as a new OpenGL texture
-    (
-        "/home/chris/Desktop/Project 4/texture/wooden_texture.jpg",
-        SOIL_LOAD_AUTO,
-        SOIL_CREATE_NEW_ID,
-        SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
-    );
-
-    // Check for an error during the load process
-    if(texture == 0)
-        printf("SOIL loading error: '%s'\n", SOIL_last_result());
+    // This line calls our class to initialize our textures
     
-    GLuint texture1;
-    texture1 = SOIL_load_OGL_texture // load an image file directly as a new OpenGL texture
-    (
-        "/home/chris/Desktop/Project 4/texture/carpet.jpg",
-        SOIL_LOAD_AUTO,
-        SOIL_CREATE_NEW_ID,
-        SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
-    );
+    //INPUT YOUR SPECIFIC FILE PATH HERE
+    //Path_max Maximum number of bytes in a pathname, including the terminating null character.
+    char buffer[PATH_MAX]; //creating a character array called buffer
+    ssize_t len = readlink("/proc/self/exe", buffer, sizeof(buffer) - 1); // this is getting the current code that is running. Creating a buffer
+    if (len != -1) { // if there is a value that comes into the nuffer(path) then we will ahve a path.
+        buffer[len-6] = '\0'; // cutting the end of the array to not get null values
+        std:: cout << buffer << std::endl;
+    } 
+    else {
+        std::cerr << "Error: Unable to retrieve executable path." << std::endl;
+    }
+    std:: string filepath(buffer);
 
-    // Check for an error during the load process
-    if(texture1 == 0)
-        printf("SOIL loading error: '%s'\n", SOIL_last_result());
-
-    // TV
-    GLuint texture2;
-    texture2 = SOIL_load_OGL_texture // load an image file directly as a new OpenGL texture
-    (
-        "/home/chris/Desktop/Project 4/texture/tv_screen.png",
-        SOIL_LOAD_AUTO,
-        SOIL_CREATE_NEW_ID,
-        SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
-    );
-
-    // Check for an error during the load process
-    if(texture2 == 0)
-        printf("SOIL loading error: '%s'\n", SOIL_last_result());
-
-    // Window
-    GLuint texture3;
-    texture3 = SOIL_load_OGL_texture // load an image file directly as a new OpenGL texture
-    (
-        "/home/chris/Desktop/Project 4/texture/123.png",
-        SOIL_LOAD_AUTO,
-        SOIL_CREATE_NEW_ID,
-        SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
-    );
-
-    // Check for an error during the load process
-    if(texture3 == 0)
-        printf("SOIL loading error: '%s'\n", SOIL_last_result());
-
-    // Carpet
-    GLuint texture4;
-    texture4 = SOIL_load_OGL_texture // load an image file directly as a new OpenGL texture
-    (
-        "/home/chris/Desktop/Project 4/texture/nintendo.png",
-        SOIL_LOAD_AUTO,
-        SOIL_CREATE_NEW_ID,
-        SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
-    );
-
-    // Check for an error during the load process
-    if(texture4 == 0)
-        printf("SOIL loading error: '%s'\n", SOIL_last_result());
+    GLuint texture, texture1, texture2, texture3, texture4;
+    texture = cover.init(filepath + "/texture/wooden_texture.jpg");
+    texture1 = cover.init(filepath +  "/texture/carpet.jpg");
+    texture2 = cover.init(filepath + "/texture/tv_screen.png");
+    texture3 = cover.init(filepath + "/texture/123.png");
+    texture4 = cover.init(filepath + "/texture/nintendo.png");
 
 // ----------------------------------------------------------- //
     // Window Frame

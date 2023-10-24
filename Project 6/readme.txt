@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------------
-Project 4: Render Your Scene With Primitives
+Project 6: Render Your Scene With Primitives
 
 Caleb Klinger, Kyungchan Im (Chris)
 Grand Canyon University
