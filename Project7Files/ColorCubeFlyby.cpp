@@ -119,23 +119,26 @@ void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glTranslatef(0, 0, -10 * zoomFactor);  // Move back to view the entire scene with zoom factor applied
+    // glLoadIdentity();
+    // glTranslatef(0, 0, -10 * zoomFactor);  // Move back to view the entire scene with zoom factor applied
+    // Apply global transformations to the whole scene
+    glPushMatrix();
+    glTranslatef(0, verticalShift, -10 * zoomFactor);  // Move the entire scene back and apply vertical shift
+    glRotatef(rotationAngle, 0, 1, 0); // Rotate the whole scene
 
-    // Draw the left and right planes
+    // Draw the left and right planes and the bouncing cubes
     LeftPlane::draw();
     RightPlane::draw();
+    BouncingCubes::draw(); // Draw the bouncing cubes
 
-    // Apply transformations
-    glPushMatrix();
-    glRotatef(rotationAngle, 0, 1, 0); // Rotate the cube around the Y-axis always
+    // Draw the primary cube at the center without moving it
     if (isMoving) {
-        glTranslatef(0, verticalShift, 0);  // Apply vertical shift to the cube only if it's moving
+        Cube::draw();
     }
-    Cube::draw();  // Draw the primary cube at the center
-    glPopMatrix(); // Restore original transformations
 
-    glFlush();
+    glPopMatrix(); // Restore the original matrix
+
+    // Swap buffers to display the frame
     glutSwapBuffers();
 }
 
@@ -168,38 +171,24 @@ void keyboard(unsigned char key, int x, int y) {
     }
     glutPostRedisplay();
 }
+
+
+
 // Modify the timer function to incorporate the new functionalities:
 void timer(int v) {
     if (isMoving) {
-        rotationAngle += 0.5;  // You can adjust the speed as required
-        // verticalShift = sin(rotationAngle * M_PI / 180.0f) * 2;  // Gives an up-down motion, adjust as required
+        rotationAngle += 0.5;  // Increment rotation angle for rotating the whole scene
+        BouncingCubes::updatePositions(); // Update positions of the bouncing cubes
     }
-    BouncingCubes::updatePositions();
     glutPostRedisplay();
-    glutTimerFunc(1000 / 60.0, timer, v);
+    glutTimerFunc(1000 / 60, timer, v);
 }
 
-
-
-// // We'll be flying around the cube by moving the camera along the orbit of the
-// // curve u->(8*cos(u), 7*cos(u)-1, 4*cos(u/3)+2).  We keep the camera looking
-// // at the center of the cube (0.5, 0.5, 0.5) and vary the up vector to achieve
-// // a weird tumbling effect.
-// void timer(int v) {
-//   static GLfloat u = 0.0;
-//   u += 0.01;
-//   glLoadIdentity();
-//   gluLookAt(8*cos(u), 7*cos(u)-1, 4*cos(u/3)+2, .5, .5, .5, cos(u), 1, 0);
-//   glutPostRedisplay();
-//   glutTimerFunc(1000/60.0, timer, v);
-// }
 
 // When the window is reshaped we have to recompute the camera settings to
 // match the new window shape.  Set the viewport to (0,0)-(w,h).  Set the
 // camera to have a 60 degree vertical field of view, aspect ratio w/h, near
 // clipping plane distance 0.5 and far clipping plane distance 40.
-
-
 void reshape(int w, int h) {
   glViewport(0, 0, w, h);
   glMatrixMode(GL_PROJECTION);
