@@ -1,0 +1,14 @@
+CXX := g++
+SRC := CheckeredTriangles.cpp
+FILE := Triangles
+FLAGS := -lglut -lGLU -lGL
+
+all: $(FILE)
+
+$(FILE): $(SRC)
+	$(CXX) $(SRC) -o $(FILE) $(FLAGS)
+
+clean:
+	rm -f $(FILE)
+
+.PHONY: all clean
