@@ -15,9 +15,16 @@ bool isMoving = true;
 float verticalShift = 0.0;
 float zoomFactor = 1.0;
 float rotationAngle = 0.0;
-
 float centerCubeRotationAngle = 0.0;
 
+// Camera control
+// Camera control
+// Camera control
+// Camera control
+float cameraZ = -20.0f; // Start 20 units back on the z-axis
+float cameraSpeed = 0.1f; // Speed at which the camera moves
+
+// ... (rest of your global variables and namespace declarations)
 
 // The cube has opposite corners at (0,0,0) and (1,1,1), which are black and
 // white respectively.  The x-axis is the red gradient, the y-axis is the
@@ -143,7 +150,19 @@ void display() {
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glTranslatef(0, 0, -10 * zoomFactor);  // Move back to view the entire scene with zoom factor applied
+
+    // The center cube is at the origin, so we look at (0, 0, 0)
+    // The camera's up-vector is assumed to be (0, 1, 0), which means 'up' is in the positive y-direction
+    gluLookAt(-1.0, -1.0, cameraZ,  // Camera position, moving along the z-axis
+              0.0, 0.0, 0.0,      // Look at the origin (center of the cube)
+              0.0, 1.0, 0.0);     // Up vector
+
+    // Move the camera back and forth along the z-axis
+    cameraZ += cameraSpeed;
+    if (cameraZ <= -20.0f || cameraZ >= 20.0f) {
+        cameraSpeed = -cameraSpeed; // Reverse direction when limits are reached
+    }
+
 
     // Draw the left and right planes
     LeftPlane::draw();
@@ -154,14 +173,8 @@ void display() {
     BouncingCubes::draw();
 
     // Draw the primary cube at the center
-    // Isolate the transformations of the middle cube by pushing and popping the matrix
-    glPushMatrix();
-    // Apply vertical shift to the center cube only
-    glTranslatef(0, verticalShift, 0);  
-    // Rotate the center cube only on its Y-axis to make it spin around
-    glRotatef(centerCubeRotationAngle, 0, 1, 0);
+    // No need to translate or rotate as we want it to be at the origin
     Cube::draw();
-    glPopMatrix();
 
     // Swap buffers to display the frame
     glutSwapBuffers();
@@ -196,8 +209,6 @@ void keyboard(unsigned char key, int x, int y) {
     }
     glutPostRedisplay();
 }
-
-
 
 // Modify the timer function to incorporate the new functionalities:
 void timer(int v) {
