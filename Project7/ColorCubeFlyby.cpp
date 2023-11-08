@@ -56,7 +56,7 @@ namespace Cube {
     position = sinf(angle * 0.1f); // This will move the cube up and down on the y-axis.
   }
 
-  void draw() {
+  void draw(GLfloat* color = nullptr) {
     glPushMatrix(); // Push the current matrix to the stack
 
     glTranslatef(0.0f, position, 0.0f); // Apply translation
@@ -65,7 +65,11 @@ namespace Cube {
     glBegin(GL_QUADS);
     for (int i = 0; i < NUM_FACES; i++) {
       for (int j = 0; j < 4; j++) {
-        glColor3fv((GLfloat*)&vertexColors[faces[i][j]]);
+        if (color) {
+          glColor3fv(color); // Use the provided color for all vertices
+        } else {
+          glColor3fv((GLfloat*)&vertexColors[faces[i][j]]);
+        }
         glVertex3iv((GLint*)&vertices[faces[i][j]]);
       }
     }
@@ -107,20 +111,20 @@ public:
 namespace BouncingCubes {
     const int NUM_CUBES = 2;
     GLfloat cubeSpeeds[NUM_CUBES] = {0.05f, -0.05f};
-    GLfloat cubePositions[NUM_CUBES][3] = {{-4.5f, 0.0f, 0.0f}, {4.5f, 0.0f, 0.0f}}; // Start close to the planes
-
+    GLfloat cubePositions[NUM_CUBES][3] = {{-4.5f, 1.0f, 0.0f}, {4.5f, -1.0f, 0.0f}}; // Start close to the planes
     void updatePositions() {
-        for (int i = 0; i < NUM_CUBES; i++) {
-            cubePositions[i][0] += cubeSpeeds[i];
+        if (isMoving) {  // Only update positions if isMoving is true
+            for (int i = 0; i < NUM_CUBES; i++) {
+                cubePositions[i][0] += cubeSpeeds[i];
 
-            // Considering the planes are at x = -5 and x = 5, and the cubes have a width of 1
-            // (meaning they have a 'radius' of 0.5), we check for collisions accordingly
-            if (cubePositions[i][0] <= -5.0f + 0.5f) { // Left plane
-                cubePositions[i][0] = -5.0f + 0.5f; // Reset position to just touching the plane
-                cubeSpeeds[i] = -cubeSpeeds[i]; // Reverse direction
-            } else if (cubePositions[i][0] >= 5.0f - 0.5f) { // Right plane
-                cubePositions[i][0] = 5.0f - 0.5f; // Reset position to just touching the plane
-                cubeSpeeds[i] = -cubeSpeeds[i]; // Reverse direction
+                // Check for collisions with the planes and reverse direction if needed
+                if (cubePositions[i][0] <= -5.0f + 0.5f) {
+                    cubePositions[i][0] = -5.0f + 0.5f;
+                    cubeSpeeds[i] = -cubeSpeeds[i];
+                } else if (cubePositions[i][0] >= 5.0f - 0.5f) {
+                    cubePositions[i][0] = 5.0f - 0.5f;
+                    cubeSpeeds[i] = -cubeSpeeds[i];
+                }
             }
         }
     }
@@ -130,12 +134,21 @@ namespace BouncingCubes {
             glPushMatrix();
             // Translate the cube to its current position
             glTranslatef(cubePositions[i][0], cubePositions[i][1], cubePositions[i][2]);
-            Cube::draw();
+
+            // Set a different color for each cube
+            GLfloat color[3];
+            if (i == 0) {
+                color[0] = 1.0f; color[1] = 0.0f; color[2] = 0.0f; // First cube red
+            } else {
+                color[0] = 0.0f; color[1] = 1.0f; color[2] = 0.0f; // Second cube green
+            }
+
+            // Draw the cube with the color set above
+            Cube::draw(color);
             glPopMatrix();
         }
     }
 }
-
 
 
 
@@ -153,12 +166,16 @@ void display() {
 
     // The center cube is at the origin, so we look at (0, 0, 0)
     // The camera's up-vector is assumed to be (0, 1, 0), which means 'up' is in the positive y-direction
-    gluLookAt(-1.0, -1.0, cameraZ,  // Camera position, moving along the z-axis
-              0.0, 0.0, 0.0,      // Look at the origin (center of the cube)
-              0.0, 1.0, 0.0);     // Up vector
+    gluLookAt(0.0, -5.0 + verticalShift, cameraZ,  // Camera position with vertical shift
+              0.0, 0.0 + verticalShift, 0.0,       // Look at the origin with vertical shift
+              0.0, 1.0, 0.0);                      // Up vector
+    glScalef(zoomFactor, zoomFactor, zoomFactor);
 
+    glRotatef(rotationAngle, 0.0f, 1.0f, 0.0f); // Rotate around the y-axis
     // Move the camera back and forth along the z-axis
     cameraZ += cameraSpeed;
+
+    
     if (cameraZ <= -20.0f || cameraZ >= 20.0f) {
         cameraSpeed = -cameraSpeed; // Reverse direction when limits are reached
     }
@@ -184,13 +201,16 @@ void display() {
 void keyboard(unsigned char key, int x, int y) {
     switch (key) {
     case 'r':
-        centerCubeRotationAngle += 10;  // Rotate the center cube
+        rotationAngle += 10;  // Increment rotation angle for rotating the whole scene
+        if (rotationAngle >= 360.0f) {
+            rotationAngle -= 360.0f; // Keep the angle in the range [0, 360]
+        }
         break;
     case 's':
-        isMoving = false;
+        isMoving = false;  // Stop the movement
         break;
     case 'c':
-        isMoving = true;
+        isMoving = true;   // Continue the movement
         break;
     case 'u':
         verticalShift += 0.5;
@@ -209,6 +229,7 @@ void keyboard(unsigned char key, int x, int y) {
     }
     glutPostRedisplay();
 }
+
 
 // Modify the timer function to incorporate the new functionalities:
 void timer(int v) {

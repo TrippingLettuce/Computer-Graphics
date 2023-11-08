@@ -95,23 +95,23 @@ void keyboard(unsigned char key, int x, int y) {
     case 'p':
         spinning = false;
         break;
-    case 'o':
+    case 'c':
         spinning = true;
         glutPostRedisplay();
         break;
-    case 'w':
+    case 'u':
         y_translation += 0.3f;
         glutPostRedisplay();
         break;
-    case 's':
+    case 'd':
         y_translation -= 0.3f;
         glutPostRedisplay();
         break;
-    case 'a':
+    case 'l':
         x_translation -= 0.3f;
         glutPostRedisplay();
         break;
-    case 'd':
+    case 'r':
         x_translation += 0.3f;
         glutPostRedisplay();
         break;
