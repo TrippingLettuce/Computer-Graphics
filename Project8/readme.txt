@@ -1,4 +1,7 @@
 Caleb Klinger and Kyungchan Im
+Loom Video Link:
+https://www.loom.com/share/4f02f7aaef7f4428a47acaea22bd35b7?sid=185244e1-7c53-42a9-bbb4-b48742339d64
+
 -----------------------------------------------------------------------------------------------
 Prerequisites
 To run this project, you need to have the following libraries installed:
