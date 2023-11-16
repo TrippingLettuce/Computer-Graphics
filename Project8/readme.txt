@@ -1,4 +1,5 @@
 Caleb Klinger and Kyungchan Im
+-----------------------------------------------------------------------------------------------
 Prerequisites
 To run this project, you need to have the following libraries installed:
 
@@ -18,6 +19,7 @@ Windows
     GLM: https://github.com/g-truc/glm
     FreeGLUT: http://freeglut.sourceforge.net/
 
+-----------------------------------------------------------------------------------------------
 In terminal Run:
 g++ 4dcube.cpp -o cube -lglfw -lGLEW -lglut -lGL -lGLU
 ./cube
@@ -28,3 +30,4 @@ Controls ()
     Change Background Color: Press 'B' to change the background color.
     Cycle Rotation Modes: Press 'D' to cycle through different 4D rotation mode
 
+-----------------------------------------------------------------------------------------------

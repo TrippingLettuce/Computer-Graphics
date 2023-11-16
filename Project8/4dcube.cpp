@@ -105,7 +105,7 @@ void renderHypercube() {
     }
     glColor3f(lineColor.r, lineColor.g, lineColor.b);
     static float angle = 0.0f;
-    angle += 0.01f;
+    angle += 0.0025f;
     
 
     // Rotate and project vertices
