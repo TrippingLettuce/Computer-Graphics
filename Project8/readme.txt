@@ -27,7 +27,7 @@ In terminal Run:
 g++ 4dcube.cpp -o cube -lglfw -lGLEW -lglut -lGL -lGLU
 ./cube
 
-Controls ()
+Controls Keyboard: 
     Change Line Color: Press 'C' to change the color of the hypercube's lines.
     Toggle Party Mode (Epilepsy warning): Press 'P' to enable or disable party mode, where the lines flash random colors.
     Change Background Color: Press 'B' to change the background color.
